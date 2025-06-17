@@ -128,26 +128,23 @@ export const handle: Handle = async ({ event, resolve }) => {
 
 ---
 
-### 4. Synchronize Translations on Client
+### 4. Client‑side Translation Synchronization
 
-In `src/routes/+layout.ts`, synchronize translations on the client. There are two ways:
-First way - provide to syncTranslation only lang and false as second argument. This way will load all you translations again bun on the client.
+In `src/routes/+layout.server.ts` in locals, the server provides the detected `lang` and `translations`. There are two synchronization strategies:
+
+---
+
+#### Option A – Minimal payload (only language)
+
+Pass only `{ lang }` and `false` to `syncTranslation`, causing the client to reimport translations:
 
 ```ts
-// src/routes/+layout.server.ts
-import { TranslationProvider } from '$lib/translation';
-import { browser } from '$app/environment';
-import type { LayoutServerLoad } from './$types.js';
-
+// +layout.server.ts
 export const load: LayoutServerLoad = async ({ locals }) => {
 	return { lang: locals.lang };
 };
 
-// src/routes/+layout.ts
-import { TranslationProvider } from '$lib/translation';
-import { browser } from '$app/environment';
-import type { LayoutLoad } from './$types.js';
-
+// +layout.ts
 export const load: LayoutLoad = async ({ data }) => {
 	const { syncTranslation } = TranslationProvider();
 	if (browser) {
@@ -156,23 +153,22 @@ export const load: LayoutLoad = async ({ data }) => {
 };
 ```
 
-Second way - provide to syncTranslation lang and translations from locals and true as second argument (or without second argument). This way will load translations from locals to sync translations from server, but page.data may be huge (states from page.data will store in your html and your html will be huge too).
+✅ Tiny initial payload  
+⚠️ Client makes an additional import of current translations
+
+---
+
+#### Option B – Include translations (larger HTML)
+
+Pass `{ lang, translations }` and optionally `true`, syncing the client directly with server translations:
 
 ```ts
-// src/routes/+layout.server.ts
-import { TranslationProvider } from '$lib/translation';
-import { browser } from '$app/environment';
-import type { LayoutServerLoad } from './$types.js';
-
+// +layout.server.ts
 export const load: LayoutServerLoad = async ({ locals }) => {
 	return { lang: locals.lang, translations: locals.translations };
 };
 
-// src/routes/+layout.ts
-import { TranslationProvider } from '$lib/translation';
-import { browser } from '$app/environment';
-import type { LayoutLoad } from './$types.js';
-
+// +layout.ts
 export const load: LayoutLoad = async ({ data }) => {
 	const { syncTranslation } = TranslationProvider();
 	if (browser) {
@@ -181,7 +177,17 @@ export const load: LayoutLoad = async ({ data }) => {
 };
 ```
 
-The first approach reduces the initial state size but may result in additional translation loading on the client. The second approach includes translations in the initial state, increasing the payload size but potentially reducing client-side translation loading.
+✅ Instantly available client-side translations  
+⚠️ Increases `page.data` size and HTML payload
+
+---
+
+#### 🔍 Comparison
+
+| Strategy | HTML Size | Client reimport |
+| -------- | --------- | --------------- |
+| Option A | ✅ Small  | ❌ Yes          |
+| Option B | ❌ Large  | ✅ No           |
 
 ---
 
@@ -243,10 +249,10 @@ export const TranslationProvider = createTranslations({
 | `preloadTranslation(event)`      | Loads translations on server.                            |
 | `syncTranslation(data)`          | Syncs server data on client.                             |
 | `switchLocale(locale)`           | Switches language on client.                             |
-| `t(key, vars?)`                  | Translate with optional variables.                       |
+| `t(key, vars?)`                  | Translation function.                                    |
 | `locale`                         | Reactive store with current locale.                      |
 | `applyHtmlLocaleAttr(html)`      | Replace `%lang%` in rendered HTML with current language. |
-| `subscribeLocaleChangeEvent(cb)` | Listen to locale changes.                                |
+| `subscribeLocaleChangeEvent(cb)` | Listen to language changes.                              |
 
 ---
 
