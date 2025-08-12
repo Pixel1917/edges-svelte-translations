@@ -1,4 +1,4 @@
-import { createProvider } from 'edges-svelte';
+import { createStore } from 'edges-svelte';
 import { RequestContext } from 'edges-svelte/context';
 import { browser } from '$app/environment';
 import type { RequestEvent } from '@sveltejs/kit';
@@ -44,7 +44,7 @@ export const createTranslations = <
 		}
 	};
 
-	return createProvider('CreateTranslationsProviderEdgesTranslatePackage', ({ createState, createDerivedState }) => {
+	return createStore('CreateTranslationsProviderEdgesTranslatePackage', ({ createState, createDerivedState }) => {
 		const locale = createState<keyof T | undefined>(undefined);
 		const t = createDerivedState<[typeof locale], (translation?: TParam | TranslationExtended | string, vars?: Record<string, unknown>) => string>(
 			[locale],
