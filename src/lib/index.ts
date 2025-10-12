@@ -44,7 +44,7 @@ export const createTranslations = <
 		}
 	};
 
-	return createStore('CreateTranslationsProviderEdgesTranslatePackage', ({ createState, createDerivedState }) => {
+	return createStore(({ createState, createDerivedState }) => {
 		const locale = createState<keyof T | undefined>(undefined);
 		const t = createDerivedState<[typeof locale], (translation?: TParam | TranslationExtended | string, vars?: Record<string, unknown>) => string>(
 			[locale],

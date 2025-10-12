@@ -36,8 +36,8 @@ importers:
         specifier: ^4.3.1
         version: 4.3.1(@types/node@24.0.3)(typescript@5.8.3)
       edges-svelte:
-        specifier: ^1.1.0
-        version: 1.1.0(@sveltejs/kit@2.21.5(@sveltejs/vite-plugin-svelte@5.1.0(svelte@5.34.3)(vite@6.3.5(@types/node@24.0.3)(jiti@2.4.2)))(svelte@5.34.3)(vite@6.3.5(@types/node@24.0.3)(jiti@2.4.2)))(svelte@5.34.3)
+        specifier: ^1.3.0
+        version: 1.3.0(@sveltejs/kit@2.21.5(@sveltejs/vite-plugin-svelte@5.1.0(svelte@5.34.3)(vite@6.3.5(@types/node@24.0.3)(jiti@2.4.2)))(svelte@5.34.3)(vite@6.3.5(@types/node@24.0.3)(jiti@2.4.2)))(svelte@5.34.3)
       env-cmd:
         specifier: ^10.1.0
         version: 10.1.0
@@ -1106,8 +1106,8 @@ packages:
   duplexer2@0.1.4:
     resolution: {integrity: sha512-asLFVfWWtJ90ZyOUHMqk7/S2w2guQKxUI2itj3d92ADHhxUSbCMGi1f1cBcJ7xM1To+pE/Khbwo1yuNbMEPKeA==}
 
-  edges-svelte@1.1.0:
-    resolution: {integrity: sha512-qhNPx2AJlpGoVbVMvTcFfymfFjxAd1Kbv/2rB5tVvl64YxsP6d19se9pxN9e8GZakj0s3vTZesCXIUCJ3Zp/ZQ==}
+  edges-svelte@1.3.0:
+    resolution: {integrity: sha512-bIFYz8d/DbV6vLUj7OAFKkLs63154EhbsM6agTMT3HV8aMSs+1zEZFN3wyFUdD6fLV+EF1zuvpNg0yj6BiMJsw==}
     peerDependencies:
       '@sveltejs/kit': ^2.16.0
       svelte: ^5.0.0
@@ -3734,7 +3734,7 @@ snapshots:
     dependencies:
       readable-stream: 2.3.8
 
-  edges-svelte@1.1.0(@sveltejs/kit@2.21.5(@sveltejs/vite-plugin-svelte@5.1.0(svelte@5.34.3)(vite@6.3.5(@types/node@24.0.3)(jiti@2.4.2)))(svelte@5.34.3)(vite@6.3.5(@types/node@24.0.3)(jiti@2.4.2)))(svelte@5.34.3):
+  edges-svelte@1.3.0(@sveltejs/kit@2.21.5(@sveltejs/vite-plugin-svelte@5.1.0(svelte@5.34.3)(vite@6.3.5(@types/node@24.0.3)(jiti@2.4.2)))(svelte@5.34.3)(vite@6.3.5(@types/node@24.0.3)(jiti@2.4.2)))(svelte@5.34.3):
     dependencies:
       '@sveltejs/kit': 2.21.5(@sveltejs/vite-plugin-svelte@5.1.0(svelte@5.34.3)(vite@6.3.5(@types/node@24.0.3)(jiti@2.4.2)))(svelte@5.34.3)(vite@6.3.5(@types/node@24.0.3)(jiti@2.4.2))
       devalue: 5.1.1
