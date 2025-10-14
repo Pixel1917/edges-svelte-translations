@@ -1,6 +1,6 @@
 {
 	"name": "edges-svelte-translations",
-	"version": "2.0.0",
+	"version": "2.0.3",
 	"license": "MIT",
 	"author": "Pixel1917",
 	"description": "Elegant, type-safe and SSR-friendly internationalization for edges-svelte",
@@ -50,7 +50,7 @@
 		}
 	},
 	"peerDependencies": {
-		"edges-svelte": ">=2.0.0",
+		"edges-svelte": ">=2.0.3",
 		"@sveltejs/kit": "^2.16.0",
 		"svelte": "^5.0.0"
 	},
@@ -61,7 +61,7 @@
 		"@sveltejs/kit": "^2.16.0",
 		"@sveltejs/package": "^2.0.0",
 		"@sveltejs/vite-plugin-svelte": "^5.0.0",
-		"edges-svelte": "^2.0.0",
+		"edges-svelte": "^2.0.3",
 		"eslint": "^9.18.0",
 		"eslint-config-prettier": "^10.0.1",
 		"eslint-plugin-svelte": "^3.0.0",
