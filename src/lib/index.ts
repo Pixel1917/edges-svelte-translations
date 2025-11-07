@@ -93,6 +93,7 @@ export const createTranslations = <
 			} else {
 				await loadTranslation(langToSync);
 			}
+			locale.set(langToSync);
 		};
 
 		const getTranslations = (locale: AvailableLocales) => {
