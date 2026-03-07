@@ -1,6 +1,6 @@
 {
 	"name": "edges-svelte-translations",
-	"version": "2.2.0",
+	"version": "2.2.1",
 	"license": "MIT",
 	"author": "Pixel1917",
 	"description": "Elegant, type-safe and SSR-friendly internationalization for edges-svelte",
@@ -50,7 +50,7 @@
 		}
 	},
 	"peerDependencies": {
-		"edges-svelte": ">=2.2.0",
+		"edges-svelte": ">=2.2.1",
 		"@sveltejs/kit": "^2.16.0",
 		"svelte": "^5.0.0"
 	},
