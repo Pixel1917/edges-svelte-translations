@@ -77,23 +77,27 @@ export const createTranslations = <
 			return cookieLang ?? baseLang;
 		};
 
-		const preloadTranslation = async (event: RequestEvent, callback?: () => AvailableLocales) => {
+		const preloadTranslation = async (callback?: () => AvailableLocales) => {
+			const event = RequestContext.current()?.event;
+			if (!event) return;
 			const lang = callback ? callback() : getLocaleToSet(event);
-			if (event && !event.locals.translations && !event.locals.lang) {
-				event.locals.translations = event.locals.translations ?? (await params.messages[lang]());
-				event.locals.lang = lang as string;
-				locale.set(lang);
-			}
+			event.locals.lang = String(lang);
+			if (!event.locals.translations) event.locals.translations = await params.messages[lang]();
+			locale.set(lang);
 		};
 
-		const syncTranslation = async <T extends { translations?: Translation; lang: string }>(data: T, fromEvent = true) => {
-			const langToSync = checkLang(data.lang) ?? params.initLang;
-			if (fromEvent && data.translations) {
-				translations[langToSync] = data.translations;
+		const syncTranslation = async <T extends { translations?: Translation; lang: string }>(data: T, fromEvent = false) => {
+			if (browser) {
+				const langToSync = checkLang(data.lang) ?? params.initLang;
+				if (fromEvent && data.translations) {
+					translations[langToSync] = data.translations;
+				} else {
+					await loadTranslation(langToSync);
+				}
+				locale.set(langToSync);
 			} else {
-				await loadTranslation(langToSync);
+				throw Error('Do no sync translations on server side');
 			}
-			locale.set(langToSync);
 		};
 
 		const getTranslations = (locale: AvailableLocales) => {
@@ -154,11 +158,20 @@ export const createTranslations = <
 			listeners.forEach((listener) => listener(locale));
 		};
 
-		const subscribeLocaleChangeEvent = (listener: (data: AvailableLocales) => void): void => {
+		const subscribeLocaleChangeEvent = (listener: (data: AvailableLocales) => void): (() => void) => {
 			if (!channels.has('localeChanged')) {
 				channels.set('localeChanged', []);
 			}
-			channels.get('localeChanged')!.push(listener);
+			const listeners = channels.get('localeChanged')!;
+			listeners.push(listener);
+			return () => {
+				const current = channels.get('localeChanged');
+				if (!current) return;
+				const idx = current.indexOf(listener);
+				if (idx !== -1) {
+					current.splice(idx, 1);
+				}
+			};
 		};
 
 		const switchLocale = async (newLocale: AvailableLocales) => {

@@ -113,7 +113,7 @@ export const handle: Handle = async ({ event, resolve }) => {
 		event,
 		async ({ edgesEvent, serialize }) => {
 			const { preloadTranslation, applyHtmlLocaleAttr } = TranslationProvider();
-			await preloadTranslation(edgesEvent);
+			await preloadTranslation();
 			return resolve(edgesEvent, {
 				transformPageChunk: ({ html }) => {
 					const serialized = serialize(html);
@@ -147,9 +147,7 @@ export const load: LayoutServerLoad = async ({ locals }) => {
 // +layout.ts
 export const load: LayoutLoad = async ({ data }) => {
 	const { syncTranslation } = TranslationProvider();
-	if (browser) {
-		await syncTranslation({ lang: data.lang }, false);
-	}
+	await syncTranslation({ lang: data.lang }, false);
 };
 ```
 
@@ -171,9 +169,7 @@ export const load: LayoutServerLoad = async ({ locals }) => {
 // +layout.ts
 export const load: LayoutLoad = async ({ data }) => {
 	const { syncTranslation } = TranslationProvider();
-	if (browser) {
-		await syncTranslation({ lang: data.lang, translations: data.translations });
-	}
+	await syncTranslation({ lang: data.lang, translations: data.translations });
 };
 ```
 
@@ -252,7 +248,7 @@ export const TranslationProvider = createTranslations({
 | `t(key, vars?)`                  | Translation function.                                    |
 | `locale`                         | Reactive store with current locale.                      |
 | `applyHtmlLocaleAttr(html)`      | Replace `%lang%` in rendered HTML with current language. |
-| `subscribeLocaleChangeEvent(cb)` | Listen to language changes.                              |
+| `subscribeLocaleChangeEvent(cb)` | Listen to language changes. Returns `unsubscribe()`.     |
 
 ---
 
@@ -274,7 +270,6 @@ Use `| plural: one, few, many` inside your strings:
 **How it works:**
 
 - For 2-form languages (like English):
-
   - `item` → singular (`1`)
   - `items` → plural (`0, 2, 3, ...`)
 
