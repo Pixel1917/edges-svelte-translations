@@ -150,7 +150,7 @@ const readTranslation = (provider: ProviderApi, key: string, vars?: Record<strin
 	return translator(key, vars);
 };
 
-const createTestSetup = () => {
+const createTestSetup = (options?: { initLangFromAcceptLanguage?: boolean }) => {
 	const calls = { en: 0, ru: 0 };
 	const messages = {
 		en: async () => {
@@ -175,7 +175,7 @@ const createTestSetup = () => {
 		messages,
 		initLang: 'en',
 		cookieName: 'lang',
-		initLangFromAcceptLanguage: true
+		initLangFromAcceptLanguage: options?.initLangFromAcceptLanguage ?? true
 	});
 
 	return { useProvider, calls };
@@ -269,6 +269,34 @@ describe('createTranslations (SSR + load behavior)', () => {
 
 		expect(event.locals.lang).toBe('en');
 		expect(translated).toBe('Custom');
+	});
+
+	it('does nothing when request context has no event in preloadTranslation', async () => {
+		const { useProvider, calls } = createTestSetup();
+
+		const translated = await runWithRequest(undefined as unknown as RequestEvent, async () => {
+			const provider = useProvider() as ProviderApi;
+			await provider.preloadTranslation();
+			return readTranslation(provider, 'home.routeName');
+		});
+
+		expect(calls.en).toBe(0);
+		expect(calls.ru).toBe(0);
+		expect(translated).toBe('home.routeName');
+	});
+
+	it('ignores accept-language when initLangFromAcceptLanguage is disabled', async () => {
+		const { useProvider } = createTestSetup({ initLangFromAcceptLanguage: false });
+		const event = makeEvent({ acceptLanguage: 'ru-RU,ru;q=0.9,en;q=0.8' });
+
+		const currentLocale = await runWithRequest(event, async () => {
+			const provider = useProvider() as ProviderApi;
+			await provider.preloadTranslation();
+			return readStoreValue(provider.locale.subscribe);
+		});
+
+		expect(event.locals.lang).toBe('en');
+		expect(currentLocale).toBe('en');
 	});
 
 	it('throws when syncTranslation is called on server', async () => {
@@ -418,6 +446,48 @@ describe('createTranslations (formatting + API behavior)', () => {
 		});
 
 		expect(result).toBe('missing.path');
+	});
+
+	it('returns empty string when translation key is not provided', async () => {
+		const { useProvider } = createTestSetup();
+		const event = makeEvent({ cookies: { lang: 'en' } });
+
+		const result = await runWithRequest(event, async () => {
+			const provider = useProvider() as ProviderApi;
+			await provider.preloadTranslation();
+			const translator = readStoreValue(provider.t.subscribe);
+			return translator();
+		});
+
+		expect(result).toBe('');
+	});
+
+	it('replaces missing interpolation variables with empty strings', async () => {
+		const { useProvider } = createTestSetup();
+		const event = makeEvent({ cookies: { lang: 'en' } });
+
+		const result = await runWithRequest(event, async () => {
+			const provider = useProvider() as ProviderApi;
+			await provider.preloadTranslation();
+			return readTranslation(provider, 'msg');
+		});
+
+		expect(result).toBe('Hello ');
+	});
+
+	it('throws on syncTranslation with unsupported locale and keeps current locale unchanged', async () => {
+		const { useProvider } = createTestSetup();
+		const event = makeEvent({ cookies: { lang: 'ru' } });
+
+		await expect(
+			runWithRequest(event, async () => {
+				const provider = useProvider() as ProviderApi;
+				await provider.preloadTranslation();
+				await provider.syncTranslation({ lang: 'de' }, false);
+			})
+		).rejects.toThrow('Do no sync translations on server side');
+
+		expect(event.locals.lang).toBe('ru');
 	});
 
 	it('applyHtmlLocaleAttr replaces placeholder with server locale', async () => {
