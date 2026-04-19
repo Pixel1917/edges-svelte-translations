@@ -1,6 +1,7 @@
-import { createStore } from 'edges-svelte';
-import { RequestContext } from 'edges-svelte/context';
-import { browser } from '$app/environment';
+import { createStore } from '@azure-net/edges';
+import { RequestContext } from '@azure-net/edges/context';
+import { TextUtil } from '@azure-net/tools';
+import { BROWSER } from '@azure-net/tools/environment';
 import type { RequestEvent } from '@sveltejs/kit';
 
 export type Path<T, Prefix extends string = ''> = T extends object
@@ -25,24 +26,6 @@ export const createTranslations = <
 
 	const translations: Partial<Record<AvailableLocales, Translation>> = {};
 	const channels: Map<'localeChanged', ((data: AvailableLocales) => void)[]> = new Map();
-
-	const pluralize = (num: number, titles: string[]): string => {
-		if (titles.length !== 2 && titles.length !== 3) {
-			throw new Error('Titles array in plural func must have 2 or 3 elements');
-		}
-
-		const number = Math.abs(num);
-
-		if (titles.length === 2) {
-			return number === 1 ? titles[0]! : titles[1]!;
-		} else {
-			const cases = [2, 0, 1, 1, 1, 2];
-			if (number % 100 > 4 && number % 100 < 20) {
-				return titles[2]!;
-			}
-			return titles[cases[number % 10 < 5 ? number % 10 : 5]!]!;
-		}
-	};
 
 	return createStore('EdgesTranslationsLocalesStore', ({ createState, createDerivedState }) => {
 		const locale = createState<keyof T | undefined>(undefined);
@@ -87,7 +70,7 @@ export const createTranslations = <
 		};
 
 		const syncTranslation = async <T extends { translations?: Translation; lang: string }>(data: T, fromEvent = false) => {
-			if (browser) {
+			if (BROWSER) {
 				const langToSync = checkLang(data.lang) ?? params.initLang;
 				if (fromEvent && data.translations) {
 					translations[langToSync] = data.translations;
@@ -101,7 +84,7 @@ export const createTranslations = <
 		};
 
 		const getTranslations = (locale: AvailableLocales) => {
-			return !browser ? RequestContext.current().event?.locals.translations : translations[locale];
+			return !BROWSER ? RequestContext.current().event?.locals.translations : translations[locale];
 		};
 
 		const translate = (locale?: AvailableLocales, messageKey?: string, vars: Record<string, unknown> = {}): string => {
@@ -129,7 +112,7 @@ export const createTranslations = <
 						console.warn(`Pluralization failed: variable "${varName}" is not a number.`);
 						return '';
 					}
-					return pluralize(count, titles);
+					return TextUtil.pluralize(count, titles);
 				});
 
 				result = result.replace(/{{\s*(\w+)\s*}}/g, (_, k) => {
@@ -159,6 +142,9 @@ export const createTranslations = <
 		};
 
 		const subscribeLocaleChangeEvent = (listener: (data: AvailableLocales) => void): (() => void) => {
+			if (!BROWSER) {
+				throw Error('Do no subscribe to change event on server side');
+			}
 			if (!channels.has('localeChanged')) {
 				channels.set('localeChanged', []);
 			}
@@ -175,7 +161,7 @@ export const createTranslations = <
 		};
 
 		const switchLocale = async (newLocale: AvailableLocales) => {
-			if (browser) {
+			if (BROWSER) {
 				await loadTranslation(newLocale);
 				locale.set(newLocale);
 				if (params.cookieName) {

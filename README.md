@@ -1,28 +1,31 @@
-# 🌍 edges-svelte-translations
+# edges-svelte-translations
 
-**Elegant, type-safe and SSR-friendly internationalization for your [edges-svelte](https://github.com/Pixel1917/edge-s) app.**
+## Last new releases in package [@azure-net/edges-translations](https://www.npmjs.com/package/@azure-net/edges-translations). This package is no longer supported.
+
+**Elegant, type-safe and SSR-friendly internationalization for your [`@azure-net/edges`](https://www.npmjs.com/package/@azure-net/edges) app.**
 
 This package provides a powerful translation provider with:
-✅ Full SSR support  
-✅ Client-side lazy switching  
-✅ Cookie-based locale persistence  
-✅ Automatic `<html lang>` updates  
-✅ Pluralization and variable interpolation  
-✅ Type-safe keys  
-✅ Simple integration with `edges-svelte`
+
+- Full SSR support
+- Client-side lazy switching
+- Cookie-based locale persistence
+- Automatic `<html lang>` updates
+- Pluralization and variable interpolation
+- Type-safe keys
+- Simple integration with `@azure-net/edges`
 
 ---
 
 ## 📦 Requirements
 
-This plugin requires **[`edges-svelte`](https://github.com/Pixel1917/edge-s)** to work properly.  
+This plugin requires **[`@azure-net/edges`](https://www.npmjs.com/package/@azure-net/edges)** to work properly.  
 Install both packages:
 
 ```bash
-npm install edges-svelte edges-svelte-translations
+npm install @azure-net/edges edges-svelte-translations
 ```
 
-or if you already use **[`edges-svelte`](https://github.com/Pixel1917/edge-s)** just
+or if you already use **`@azure-net/edges`** just
 
 ```bash
 npm install edges-svelte-translations
@@ -30,7 +33,7 @@ npm install edges-svelte-translations
 
 ---
 
-## 🚀 Quick Start
+## Quick Start
 
 ### 1. Define Translations
 
@@ -46,7 +49,7 @@ export const messages = {
 
 Each translation file (e.g., `en.js`, `ru.js`) should export a default object containing the translations.
 
-## 🗣️ Example Translations
+## Example Translations
 
 Example translation files:
 
@@ -97,33 +100,40 @@ export const TranslationProvider = createTranslations({
 
 ---
 
-### 3. Configure edges-svelte and translations in hooks
+### 3. Configure `@azure-net/edges` and translations in hooks
 
-In `src/hooks.server.ts`, configure the edge middleware:
+In `vite.config.ts`, ensure the edges plugin is enabled:
+
+```ts
+import { sveltekit } from '@sveltejs/kit/vite';
+import { defineConfig } from 'vite';
+import { edgesPlugin } from '@azure-net/edges/plugin';
+
+export default defineConfig({
+	plugins: [sveltekit(), edgesPlugin()]
+});
+```
+
+In `src/hooks.server.ts`, preload translations and apply `lang` attr:
 
 ```ts
 // src/hooks.server.ts
-import { dev } from '$app/environment';
-import { edgesHandle } from 'edges-svelte/server';
 import { type Handle } from '@sveltejs/kit';
 import { TranslationProvider } from '$lib/translations';
 
 export const handle: Handle = async ({ event, resolve }) => {
-	return edgesHandle(
-		event,
-		async ({ edgesEvent, serialize }) => {
-			const { preloadTranslation, applyHtmlLocaleAttr } = TranslationProvider();
-			await preloadTranslation();
-			return resolve(edgesEvent, {
-				transformPageChunk: ({ html }) => {
-					const serialized = serialize(html);
-					return applyHtmlLocaleAttr(serialized);
-				}
-			});
-		},
-		dev
-	);
+	const { preloadTranslation, applyHtmlLocaleAttr } = TranslationProvider();
+	await preloadTranslation();
+	return resolve(event, {
+		transformPageChunk: ({ html }) => applyHtmlLocaleAttr(html)
+	});
 };
+```
+
+Also ensure your `src/app.html` contains `%lang%` in the root html tag:
+
+```html
+<html lang="%lang%"></html>
 ```
 
 ---
@@ -187,7 +197,7 @@ export const load: LayoutLoad = async ({ data }) => {
 
 ---
 
-## 🧩 Usage in Svelte Components
+## Usage in Svelte Components
 
 In your Svelte components, use the translation provider:
 
@@ -209,14 +219,14 @@ In your Svelte components, use the translation provider:
 
 ---
 
-## 🍪 Cookie-Based Language Initialization
+## Cookie-Based Language Initialization
 
 You can set `cookieName` to use and sync plugin current language with cookies automatically:
 
 ```ts
 // src/lib/translation/index.ts
 import { messages } from './locales/index.js';
-import { createTranslations } from 'edges-svelte';
+import { createTranslations } from 'edges-svelte-translations';
 
 export const TranslationProvider = createTranslations({
 	messages,
@@ -227,7 +237,7 @@ export const TranslationProvider = createTranslations({
 
 ---
 
-## 🗂️ API
+## API
 
 ### `createTranslations(options)`
 
@@ -242,7 +252,7 @@ export const TranslationProvider = createTranslations({
 
 | Method                           | Description                                              |
 | -------------------------------- | -------------------------------------------------------- |
-| `preloadTranslation(event)`      | Loads translations on server.                            |
+| `preloadTranslation(callback?)`  | Loads translations on server.                            |
 | `syncTranslation(data)`          | Syncs server data on client.                             |
 | `switchLocale(locale)`           | Switches language on client.                             |
 | `t(key, vars?)`                  | Translation function.                                    |
@@ -252,7 +262,7 @@ export const TranslationProvider = createTranslations({
 
 ---
 
-## 🔢 Pluralization
+## Pluralization
 
 This package has built-in pluralization for both **2-form** (English) and **3-form** (Slavic languages) rules.
 
@@ -282,13 +292,24 @@ If you pass a variable that is not a number, it logs a warning and returns an em
 
 ---
 
+## ⚠️ Action/Redirect Limitations
+
+This package relies on the same sync model as `@azure-net/edges`: it is **not** a full consistency protocol for every SvelteKit flow.
+
+- Avoid changing locale in server `svelte actions` and expecting guaranteed client sync.
+- Especially with `redirect` responses from actions, client translation state may not synchronize the way you expect.
+- Prefer client-side `switchLocale(...)` for interactive language changes.
+- If you must change locale on server + redirect, use explicit app-level transfer patterns (cookie/session/flash) and handle follow-up sync in `load`.
+
+---
+
 ## License
 
 [MIT](./LICENSE)
 
 ---
 
-## ✨ Made for [edges-svelte](https://github.com/Pixel1917/edge-s)
+## ✨ Made for `@azure-net/edges`
 
 ---
 

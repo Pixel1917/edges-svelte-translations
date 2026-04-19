@@ -23,7 +23,7 @@ const { requestContextMock } = vi.hoisted(() => {
 	};
 });
 
-vi.mock('edges-svelte', () => ({
+vi.mock('@azure-net/edges', () => ({
 	createStore: <T>(nameOrFactory: string | ((deps: unknown) => T), maybeFactory?: (deps: unknown) => T) => {
 		const factory = (typeof nameOrFactory === 'string' ? maybeFactory : nameOrFactory)!;
 		return () => {
@@ -72,7 +72,7 @@ vi.mock('edges-svelte', () => ({
 	}
 }));
 
-vi.mock('edges-svelte/context', () => ({
+vi.mock('@azure-net/edges/context', () => ({
 	RequestContext: requestContextMock
 }));
 
@@ -471,17 +471,15 @@ describe('createTranslations (formatting + API behavior)', () => {
 		expect(result).toEqual({ en: 'en', ru: 'ru' });
 	});
 
-	it('returns unsubscribe function for locale change listeners', async () => {
+	it('throws when locale change listener subscription is attempted on server', async () => {
 		const { useProvider } = createTestSetup();
 		const event = makeEvent();
 
-		const unsubscribeType = await runWithRequest(event, async () => {
-			const provider = useProvider() as ProviderApi;
-			const cleanup = provider.subscribeLocaleChangeEvent(() => {});
-			cleanup();
-			return typeof cleanup;
-		});
-
-		expect(unsubscribeType).toBe('function');
+		await expect(
+			runWithRequest(event, async () => {
+				const provider = useProvider() as ProviderApi;
+				provider.subscribeLocaleChangeEvent(() => {});
+			})
+		).rejects.toThrow('Do no subscribe to change event on server side');
 	});
 });
