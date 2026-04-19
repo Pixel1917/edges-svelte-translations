@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from 'vitest';
-import type { RequestEvent } from '@sveltejs/kit';
 import { createTranslations, type Translation } from './index.js';
+import type { RequestEvent } from '@sveltejs/kit';
 
 const { requestContextMock } = vi.hoisted(() => {
 	const state = {

@@ -1,6 +1,4 @@
-# edges-svelte-translations
-
-## Last new releases in package [@azure-net/edges-translations](https://www.npmjs.com/package/@azure-net/edges-translations). This package is no longer supported.
+# @azure-net/edges-translations
 
 **Elegant, type-safe and SSR-friendly internationalization for your [`@azure-net/edges`](https://www.npmjs.com/package/@azure-net/edges) app.**
 
@@ -22,13 +20,13 @@ This plugin requires **[`@azure-net/edges`](https://www.npmjs.com/package/@azure
 Install both packages:
 
 ```bash
-npm install @azure-net/edges edges-svelte-translations
+npm install @azure-net/edges @azure-net/edges-translations
 ```
 
 or if you already use **`@azure-net/edges`** just
 
 ```bash
-npm install edges-svelte-translations
+npm install @azure-net/edges-translations
 ```
 
 ---
@@ -88,7 +86,7 @@ Initialize the translation provider:
 ```ts
 // $lib/translations/index.ts or whereever you want
 import { messages } from './messages';
-import { createTranslations } from 'edges-svelte-translations';
+import { createTranslations } from '@azure-net/edges-translations';
 
 export const TranslationProvider = createTranslations({
 	messages,
@@ -226,7 +224,7 @@ You can set `cookieName` to use and sync plugin current language with cookies au
 ```ts
 // src/lib/translation/index.ts
 import { messages } from './locales/index.js';
-import { createTranslations } from 'edges-svelte-translations';
+import { createTranslations } from '@azure-net/edges-translations';
 
 export const TranslationProvider = createTranslations({
 	messages,

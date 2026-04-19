@@ -1,6 +1,6 @@
 {
-	"name": "edges-svelte-translations",
-	"version": "3.2.0",
+	"name": "@azure-net/edges-translations",
+	"version": "1.0.0",
 	"license": "MIT",
 	"author": "Pixel1917",
 	"description": "Elegant, type-safe and SSR-friendly internationalization for edges-svelte",
