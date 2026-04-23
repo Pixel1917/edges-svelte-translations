@@ -9,12 +9,12 @@ importers:
   .:
     dependencies:
       '@azure-net/tools':
-        specifier: ^1.2.2
-        version: 1.2.2
+        specifier: ^1.2.3
+        version: 1.2.3
     devDependencies:
       '@azure-net/edges':
-        specifier: 1.2.2
-        version: 1.2.2(@sveltejs/kit@2.57.1(@sveltejs/vite-plugin-svelte@7.0.0(svelte@5.55.4(@typescript-eslint/types@8.58.2))(vite@8.0.8(@types/node@25.6.0)(jiti@2.6.1)))(svelte@5.55.4(@typescript-eslint/types@8.58.2))(typescript@5.9.3)(vite@8.0.8(@types/node@25.6.0)(jiti@2.6.1)))(svelte@5.55.4(@typescript-eslint/types@8.58.2))
+        specifier: 1.2.3
+        version: 1.2.3(@sveltejs/kit@2.57.1(@sveltejs/vite-plugin-svelte@7.0.0(svelte@5.55.4(@typescript-eslint/types@8.58.2))(vite@8.0.8(@types/node@25.6.0)(jiti@2.6.1)))(svelte@5.55.4(@typescript-eslint/types@8.58.2))(typescript@5.9.3)(vite@8.0.8(@types/node@25.6.0)(jiti@2.6.1)))(svelte@5.55.4(@typescript-eslint/types@8.58.2))
       '@commitlint/cli':
         specifier: ^20.5.0
         version: 20.5.0(@types/node@25.6.0)(conventional-commits-parser@6.4.0)(typescript@5.9.3)
@@ -87,14 +87,14 @@ importers:
 
 packages:
 
-  '@azure-net/edges@1.2.2':
-    resolution: {integrity: sha512-snYzX/I894GhSsGMKMjwIpiWcbkly2Ww5+rsoTRkUBrQY43ulXG9BGC8wqEKAbeQTqTDzAmvaTD/EViMTurEsA==}
+  '@azure-net/edges@1.2.3':
+    resolution: {integrity: sha512-/sF84AMThHCm6wgicPuRSThA55JSlwek7j6p/lwXf8TOEMMCjOiDK+5SXIdqU+CX23YquO2gxy9624yLojxUiQ==}
     peerDependencies:
       '@sveltejs/kit': '>=2.0.0'
       svelte: '>=5.0.0'
 
-  '@azure-net/tools@1.2.2':
-    resolution: {integrity: sha512-clpn5XNJ421RrlgO34akx9lpOpme1qd0VosO8U5u+ohP98SRJpAWiHOA6hJrPDWdMsxf3kMZ2deApDn8TREBtw==}
+  '@azure-net/tools@1.2.3':
+    resolution: {integrity: sha512-istBw4GNVeRb/z2tBwsDp7OXuBXU1fdpJfHtwZDjgtr8TuohQwhC8GKJ5Et6sT/MeN1Vw3TTfFIixJfKtFSamQ==}
 
   '@babel/code-frame@7.29.0':
     resolution: {integrity: sha512-9NhCeYjq9+3uxgdtp20LSiJXJvN0FeCtNGpJxuMFZ1Kv3cWUNb6DOhJwUvcVCzKGR66cw4njwM6hrJLqgOwbcw==}
@@ -1848,13 +1848,13 @@ packages:
 
 snapshots:
 
-  '@azure-net/edges@1.2.2(@sveltejs/kit@2.57.1(@sveltejs/vite-plugin-svelte@7.0.0(svelte@5.55.4(@typescript-eslint/types@8.58.2))(vite@8.0.8(@types/node@25.6.0)(jiti@2.6.1)))(svelte@5.55.4(@typescript-eslint/types@8.58.2))(typescript@5.9.3)(vite@8.0.8(@types/node@25.6.0)(jiti@2.6.1)))(svelte@5.55.4(@typescript-eslint/types@8.58.2))':
+  '@azure-net/edges@1.2.3(@sveltejs/kit@2.57.1(@sveltejs/vite-plugin-svelte@7.0.0(svelte@5.55.4(@typescript-eslint/types@8.58.2))(vite@8.0.8(@types/node@25.6.0)(jiti@2.6.1)))(svelte@5.55.4(@typescript-eslint/types@8.58.2))(typescript@5.9.3)(vite@8.0.8(@types/node@25.6.0)(jiti@2.6.1)))(svelte@5.55.4(@typescript-eslint/types@8.58.2))':
     dependencies:
-      '@azure-net/tools': 1.2.2
+      '@azure-net/tools': 1.2.3
       '@sveltejs/kit': 2.57.1(@sveltejs/vite-plugin-svelte@7.0.0(svelte@5.55.4(@typescript-eslint/types@8.58.2))(vite@8.0.8(@types/node@25.6.0)(jiti@2.6.1)))(svelte@5.55.4(@typescript-eslint/types@8.58.2))(typescript@5.9.3)(vite@8.0.8(@types/node@25.6.0)(jiti@2.6.1))
       svelte: 5.55.4(@typescript-eslint/types@8.58.2)
 
-  '@azure-net/tools@1.2.2': {}
+  '@azure-net/tools@1.2.3': {}
 
   '@babel/code-frame@7.29.0':
     dependencies:
