@@ -19,6 +19,7 @@ export const createTranslations = <
 	initLang: keyof T;
 	cookieName?: string;
 	initLangFromAcceptLanguage?: boolean;
+	prefix?: string;
 }) => {
 	type AvailableLocales = keyof typeof params.messages;
 
@@ -27,7 +28,7 @@ export const createTranslations = <
 	const translations: Partial<Record<AvailableLocales, Translation>> = {};
 	const channels: Map<'localeChanged', ((data: AvailableLocales) => void)[]> = new Map();
 
-	return createStore('EdgesTranslationsLocalesStore', ({ createState, createDerivedState }) => {
+	return createStore(`${params.prefix ?? ''}EdgesTranslationsLocalesStore`, ({ createState, createDerivedState }) => {
 		const locale = createState<keyof T | undefined>(undefined);
 		const t = createDerivedState<[typeof locale], (translation?: TParam | TranslationExtended | string, vars?: Record<string, unknown>) => string>(
 			[locale],

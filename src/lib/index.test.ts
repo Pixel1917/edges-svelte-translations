@@ -2,7 +2,7 @@ import { describe, expect, it, vi } from 'vitest';
 import { createTranslations, type Translation } from './index.js';
 import type { RequestEvent } from '@sveltejs/kit';
 
-const { requestContextMock } = vi.hoisted(() => {
+const { requestContextMock, storeNames } = vi.hoisted(() => {
 	const state = {
 		getter: () =>
 			({
@@ -19,12 +19,14 @@ const { requestContextMock } = vi.hoisted(() => {
 			current() {
 				return state.getter();
 			}
-		}
+		},
+		storeNames: [] as string[]
 	};
 });
 
 vi.mock('@azure-net/edges', () => ({
 	createStore: <T>(nameOrFactory: string | ((deps: unknown) => T), maybeFactory?: (deps: unknown) => T) => {
+		if (typeof nameOrFactory === 'string') storeNames.push(nameOrFactory);
 		const factory = (typeof nameOrFactory === 'string' ? maybeFactory : nameOrFactory)!;
 		return () => {
 			const createState = <V>(initial: V) => {
@@ -182,6 +184,20 @@ const createTestSetup = (options?: { initLangFromAcceptLanguage?: boolean }) => 
 };
 
 describe('createTranslations (SSR + load behavior)', () => {
+	it('applies store prefix when provided', () => {
+		storeNames.length = 0;
+
+		createTranslations({
+			messages: {
+				en: async () => ({ test: 'test' })
+			},
+			initLang: 'en',
+			prefix: 'Admin'
+		});
+
+		expect(storeNames.at(-1)).toBe('AdminEdgesTranslationsLocalesStore');
+	});
+
 	it('preloads default init language when no cookie/header', async () => {
 		const { useProvider, calls } = createTestSetup();
 		const event = makeEvent();
